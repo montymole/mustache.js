@@ -353,6 +353,7 @@
    */
   Context.prototype.lookup = function (name) {
     var cache = this.cache;
+    var SCRIPT_REGEX = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
 
     var value;
     if (name in cache) {
@@ -383,6 +384,12 @@
 
     if (isFunction(value))
       value = value.call(this.view);
+
+    if (typeof value == 'string') {
+      while (SCRIPT_REGEX.test(value)) {
+        value = value.replace(SCRIPT_REGEX, "");
+      }
+    }
 
     return value;
   };
